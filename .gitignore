@@ -1,0 +1,13 @@
+# modeli i podaci su preveliki za github
+*.pth
+*.onnx
+*.tif
+*.tiff
+*.ecw
+*.gpkg
+*.npz
+*.aux.xml
+data/
+# privremene datoteke pythona
+__pycache__/
+*.pyc

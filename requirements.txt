@@ -1,0 +1,17 @@
+# biblioteke potrebne za programe iz ovog foldera
+# pytorch sa podrskom za cuda instalirati prema uputstvu sa pytorch.org
+torch
+segmentation-models-pytorch==0.5.0
+numpy
+rasterio
+geopandas
+shapely
+scipy
+pillow
+tqdm
+matplotlib
+# samo za izvoz_onnx.py
+onnx
+onnxruntime
+onnxscript
+# provera_prevzorkovanja.py se pokrece u qgis-u (koristi gdal iz qgis-a)
