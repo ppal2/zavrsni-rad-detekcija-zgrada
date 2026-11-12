@@ -22,13 +22,15 @@ import torch
 from rasterio.windows import Window
 from tqdm import tqdm
 
+from podesavanja import DATA, THESIS_DIR   # putanje su u podesavanja.py
+
 # ---------------------------------------------------------------------------
 # podesavanja
 # ---------------------------------------------------------------------------
 
-INPUT_RASTER = r"C:\thesis\data\campus_30cm.tif"       # ortofoto od 30 cm
-OUTPUT_RASTER = r"C:\thesis\data\campus_buildings.tif"
-MODEL_PATH = r"C:\thesis\best_model.pth"               # model iz train.py
+INPUT_RASTER = DATA / "campus_30cm.tif"              # ortofoto od 30 cm
+OUTPUT_RASTER = DATA / "campus_buildings.tif"
+MODEL_PATH = THESIS_DIR / "best_model.pth"             # model iz train.py
 
 ENCODER = "resnet34"       # mora biti isti kao pri treniranju
 TILE_SIZE = 512

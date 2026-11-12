@@ -1,5 +1,5 @@
 """
-podaci_treniranja.py - brojevi za odeljak 4.4 i tabelu 6.2 (treniranje dva polazna modela)
+podaci_treniranja.py - brojevi za odeljak 4.5 i tabelu 6.2 (treniranje dva polazna modela)
 
 nista se zaista ne trenira i nista se ne cuva: .pth datoteke se samo citaju.
 traje oko 5 minuta.
@@ -40,13 +40,15 @@ from datetime import datetime
 
 import numpy as np
 
+from podesavanja import DATA, THESIS_DIR   # putanje su u podesavanja.py
+
 # ---------------------------------------------------------------------------
 # podesavanja - iste putanje kao u train.py, tile_inria.py i dotreniravanje.py
 # ---------------------------------------------------------------------------
 DATASETS = {
     #  ime:    (folder sa iseccima,                 sacuvani model)
-    "WHU":   (r"C:\thesis\data\whu",              r"C:\thesis\best_model_whu.pth"),
-    "Inria": (r"C:\thesis\data\inria_tiles",      r"C:\thesis\best_model_inria.pth"),
+    "WHU":   (str(DATA / "whu"),         str(THESIS_DIR / "best_model_whu.pth")),
+    "Inria": (str(DATA / "inria_tiles"), str(THESIS_DIR / "best_model_inria.pth")),
 }
 EPOCHS = 20            # kao u train.py
 BATCH_SIZE = 2         # kao u train.py

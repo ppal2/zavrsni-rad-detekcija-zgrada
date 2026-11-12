@@ -30,12 +30,14 @@ from PIL import Image
 from rasterio.windows import Window
 from tqdm import tqdm
 
+from podesavanja import DATA   # putanje su u podesavanja.py
+
 # ---------------------------------------------------------------------------
 # podesavanja
 # ---------------------------------------------------------------------------
 
-INRIA_ROOT = r"C:\thesis\data\inria\train"       # folder sa podfolderima images i gt
-OUTPUT_ROOT = r"C:\thesis\data\inria_tiles"      # ovde se upisuju isecci
+INRIA_ROOT = DATA / "inria" / "train"             # folder sa podfolderima images i gt
+OUTPUT_ROOT = DATA / "inria_tiles"               # ovde se upisuju isecci
 
 # gradovi koji se koriste (u skupu postoje: austin, chicago, kitsap, tyrol-w, vienna)
 REGIONS = ["vienna", "tyrol-w"]

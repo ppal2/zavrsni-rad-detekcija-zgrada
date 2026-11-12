@@ -2,10 +2,16 @@
 train.py - treniranje polaznog modela (u-net sa enkoderom resnet34)
 
 isti program je koriscen za oba polazna modela; razlikuje se samo skup podataka:
-  - model whu:   data_root = c:\\thesis\\data\\whu, model je sacuvan kao best_model_whu.pth
-  - model inria: data_root = c:\\thesis\\data\\inria_tiles (napravio tile_inria.py),
-                 model je sacuvan kao best_model_inria.pth
-(ovde su upisana podesavanja za model inria.)
+  - model whu:   DATA_ROOT = DATA / "whu",         MODEL_OUT = best_model_whu.pth
+  - model inria: DATA_ROOT = DATA / "inria_tiles"  (napravio tile_inria.py),
+                 MODEL_OUT = best_model_inria.pth
+(ovde su upisana podesavanja za model inria; putanje su u podesavanja.py.)
+
+seed: SEED je dodat posle izrade rada. polazni modeli koji su korisceni u radu
+trenirani su bez seed-a, pa se njihovi rezultati ne mogu ponoviti potpuno isto.
+sa seed-om novo treniranje svaki put pravi iste nasumicne izbore (mesanje
+isecaka, uvecanje skupa, pocetne tezine dekodera). na grafickoj kartici neki
+proracuni ni tada nisu potpuno deterministicki, pa rezultat moze malo da se razlikuje.
 
 podesavanja: 20 epoha, grupa od 2 isecka 512 x 512, adam sa stopom ucenja 1e-4,
 gubitak dice + bce, mesovita preciznost (amp), nasumicna odrazavanja i rotacije.
@@ -18,6 +24,7 @@ pokretanje:
 
 import glob
 import os
+import random
 
 import numpy as np
 import segmentation_models_pytorch as smp
@@ -26,11 +33,15 @@ from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 
+from podesavanja import DATA, THESIS_DIR   # putanje su u podesavanja.py
+
 # ---------------------------------------------------------------------------
 # podesavanja
 # ---------------------------------------------------------------------------
 
-DATA_ROOT = r"C:\thesis\data\inria_tiles"   # za model whu: c:\thesis\data\whu
+DATA_ROOT = DATA / "inria_tiles"                 # za model whu: DATA / "whu"
+MODEL_OUT = THESIS_DIR / "best_model_inria.pth"  # za model whu: best_model_whu.pth
+SEED = 42                  # pocetna vrednost generatora slucajnih brojeva (isto kao u dotreniravanje.py)
 ENCODER = "resnet34"       # enkoder (kicma) mreze u-net
 BATCH_SIZE = 2             # mala grupa, jer graficka karta gtx 1050 ti ima samo 4 gb memorije
 EPOCHS = 20
@@ -43,6 +54,20 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 # unapred treniran na imagenet-u, pa ulaz mora biti normalizovan na isti nacin.
 MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
 STD = np.array([0.229, 0.224, 0.225], dtype=np.float32)
+
+
+def set_seed(seed):
+    """
+    postavlja isti pocetak za sve generatore slucajnih brojeva (python, numpy,
+    pytorch), pa svako novo treniranje pravi iste nasumicne izbore.
+    """
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    # cudnn bira iste (deterministicke) algoritme pri svakom pokretanju
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 
 # ---------------------------------------------------------------------------
@@ -137,6 +162,7 @@ def compute_iou(logits, targets, threshold=0.5):
 # ---------------------------------------------------------------------------
 
 def main():
+    set_seed(SEED)
     print(f"Device: {DEVICE}")
     if DEVICE == "cuda":
         print(f"GPU: {torch.cuda.get_device_name(0)}")
@@ -222,12 +248,11 @@ def main():
         print(f"Epoch {epoch}: train loss {train_loss:.4f} | "
               f"val loss {val_loss:.4f} | val IoU {val_iou:.4f}")
 
-        # cuva se najbolji model, a ne poslednji (za model whu ime datoteke je bilo
-        # best_model.pth, kasnije preimenovano u best_model_whu.pth)
+        # cuva se najbolji model, a ne poslednji
         if val_iou > best_iou:
             best_iou = val_iou
-            torch.save(model.state_dict(), "best_model_inria.pth")
-            print(f"  -> new best (IoU {best_iou:.4f}), saved to best_model.pth")
+            torch.save(model.state_dict(), MODEL_OUT)
+            print(f"  -> new best (IoU {best_iou:.4f}), saved to {MODEL_OUT.name}")
 
     print(f"\nFinished. Best validation IoU: {best_iou:.4f}")
 

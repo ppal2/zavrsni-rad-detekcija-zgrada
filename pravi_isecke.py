@@ -40,12 +40,14 @@ import rasterio
 from rasterio.features import rasterize
 from rasterio.windows import Window
 
+from podesavanja import DATA   # putanje su u podesavanja.py
+
 # ----------------------------------------------------------------------------
 # podesavanja
 # ----------------------------------------------------------------------------
-ORTHO = Path(r"C:\thesis\data\campus_30cm.tif")         # ortofoto od 30 cm (isti kao u predict_overlap.py)
-GPKG = Path(r"C:\thesis\data\kampus_oznake.gpkg")       # geopackage sa slojevima zgrade i oblasti
-OUT = Path(r"C:\thesis\data\isecci_kampus")             # izlazni folder (pravi se ako ne postoji)
+ORTHO = DATA / "campus_30cm.tif"                       # ortofoto od 30 cm (isti kao u predict_overlap.py)
+GPKG = DATA / "kampus_oznake.gpkg"                     # geopackage sa slojevima zgrade i oblasti
+OUT = DATA / "isecci_kampus"                           # izlazni folder (pravi se ako ne postoji)
 
 TILE = 512  # velicina isecka u pikselima (512 x 0,3 m = 153,6 m)
 

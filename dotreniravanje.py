@@ -40,11 +40,12 @@ import rasterio
 from rasterio.windows import Window
 from rasterio.windows import transform as window_transform
 
+from podesavanja import DATA, THESIS_DIR   # putanje su u podesavanja.py
+
 # ----------------------------------------------------------------------------
 # podesavanja
 # ----------------------------------------------------------------------------
-DATA = Path(r"C:\thesis\data")
-MODELS_DIR = Path(r"C:\thesis")
+MODELS_DIR = THESIS_DIR
 
 ORTHO = DATA / "campus_30cm.tif"
 MASK = DATA / "isecci_kampus" / "maska_30cm.tif"

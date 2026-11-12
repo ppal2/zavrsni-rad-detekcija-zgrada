@@ -24,12 +24,12 @@ from rasterio.features import rasterize
 from rasterio.windows import from_bounds
 
 from ocena import pixel_scores   # iste mere kao u ostatku rada
+from podesavanja import DATA   # putanje su u podesavanja.py
 
 # ----------------------------------------------------------------------------
 # podesavanja
 # ----------------------------------------------------------------------------
-DATA = Path(r"C:\thesis\data")
-DEEPNESS_SHP = Path(r"C:\Users\palpi\OneDrive - Univerzitet u Novom Sadu\diplomski rad\deepness_zgrada.shp")
+DEEPNESS_SHP = DATA / "deepness_zgrada.shp"          # rezultat deepness-a, sacuvan u folder data
 MASK = DATA / "isecci_kampus" / "maska_30cm.tif"
 AREAS = DATA / "isecci_kampus" / "oblasti_30cm.tif"
 PYTHON_PRED = DATA / "dotreniran_inria_kampus.tif"   # iz dotreniravanje.py

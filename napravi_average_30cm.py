@@ -10,10 +10,18 @@ vazi za oba.
 """
 from osgeo import gdal
 import numpy as np
+import sys
+from pathlib import Path
 
-SRC_10CM = r"C:\thesis\data\Campus Novi Sad.ecw"
-REF_30CM = r"C:\thesis\data\campus_30cm.tif"          # postojeci snimak (bilinear iz nivoa od 20 cm)
-OUT_30CM = r"C:\thesis\data\campus_30cm_average.tif"  # novi snimak (average iz 10 cm)
+# podesavanja.py je u istom folderu kao ovaj program. qgis konzola taj folder
+# ne dodaje uvek sama u putanju za import, pa se ovde dodaje rucno.
+if "__file__" in globals():
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+from podesavanja import DATA   # putanje su u podesavanja.py
+
+SRC_10CM = str(DATA / "Campus Novi Sad.ecw")
+REF_30CM = str(DATA / "campus_30cm.tif")           # postojeci snimak (bilinear iz nivoa od 20 cm)
+OUT_30CM = str(DATA / "campus_30cm_average.tif")   # novi snimak (average iz 10 cm)
 
 gdal.UseExceptions()
 ref = gdal.Open(REF_30CM)

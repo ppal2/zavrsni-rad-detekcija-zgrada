@@ -39,10 +39,11 @@ from pathlib import Path
 import numpy as np
 import rasterio
 
+from podesavanja import DATA   # putanje su u podesavanja.py
+
 # ----------------------------------------------------------------------------
 # podesavanja
 # ----------------------------------------------------------------------------
-DATA = Path(r"C:\thesis\data")
 
 MASK = DATA / "isecci_kampus" / "maska_30cm.tif"
 AREAS = DATA / "isecci_kampus" / "oblasti_30cm.tif"

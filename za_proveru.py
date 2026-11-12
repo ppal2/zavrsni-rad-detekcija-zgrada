@@ -33,10 +33,11 @@ from rasterio.features import shapes
 from scipy import ndimage
 from shapely.geometry import shape
 
+from podesavanja import DATA   # putanje su u podesavanja.py
+
 # ----------------------------------------------------------------------------
 # podesavanja
 # ----------------------------------------------------------------------------
-DATA = Path(r"C:\thesis\data")
 MASK = DATA / "isecci_kampus" / "maska_30cm.tif"
 AREAS = DATA / "isecci_kampus" / "oblasti_30cm.tif"
 PRED_A = DATA / "campus_buildings_whu_overlap.tif"    # predvidjanje modela whu

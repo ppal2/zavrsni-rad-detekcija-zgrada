@@ -43,18 +43,19 @@ from pathlib import Path
 import numpy as np
 from tqdm import tqdm
 
+from podesavanja import DATA, THESIS_DIR   # putanje su u podesavanja.py
+
 # ---------------------------------------------------------------------------
 # podesavanja
 # ---------------------------------------------------------------------------
-DATA = Path(r"C:\thesis\data")
 ORTHO = DATA / "campus_30cm.tif"
 MASK = DATA / "isecci_kampus" / "maska_30cm.tif"
 AREAS = DATA / "isecci_kampus" / "oblasti_30cm.tif"
 MODELS = {
-    "WHU": Path(r"C:\thesis\best_model_whu.pth"),
-    "Inria": Path(r"C:\thesis\best_model_inria.pth"),
+    "WHU": THESIS_DIR / "best_model_whu.pth",
+    "Inria": THESIS_DIR / "best_model_inria.pth",
 }
-OUT_DIR = Path(r"C:\thesis")
+OUT_DIR = THESIS_DIR
 CROPS_NPZ = OUT_DIR / "slika_savovi_podaci.npz"
 
 TILE = 512

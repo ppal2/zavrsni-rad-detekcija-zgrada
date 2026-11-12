@@ -30,16 +30,18 @@ import rasterio
 import segmentation_models_pytorch as smp
 import torch
 
+from podesavanja import DATA, THESIS_DIR   # putanje su u podesavanja.py
+
 # ----------------------------------------------------------------------------
 # podesavanja
 # ----------------------------------------------------------------------------
 # model inria dotreniran bez oznaka kampusa: na kampusu je to posten primer,
 # jer model nikad nije video te zgrade (izmereni iou na kampusu 0,826)
-MODEL_PATH = Path(r"C:\thesis\dotreniran_inria_bez_kampus.pth")
-OUT_ONNX = Path(r"C:\thesis\deepness_zgrade_inria.onnx")
+MODEL_PATH = THESIS_DIR / "dotreniran_inria_bez_kampus.pth"
+OUT_ONNX = THESIS_DIR / "deepness_zgrade_inria.onnx"
 
-ORTHO = Path(r"C:\thesis\data\campus_30cm.tif")              # samo za proveru
-AREAS = Path(r"C:\thesis\data\isecci_kampus\oblasti_30cm.tif")
+ORTHO = DATA / "campus_30cm.tif"              # samo za proveru
+AREAS = DATA / "isecci_kampus" / "oblasti_30cm.tif"
 CHECK_AREA_CODE = 2                                          # 2 = kampus
 
 TILE = 512

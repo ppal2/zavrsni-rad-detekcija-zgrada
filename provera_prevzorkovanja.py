@@ -18,10 +18,18 @@ koji rezultat je isti kao campus_30cm.tif.
 """
 from osgeo import gdal
 import numpy as np
+import sys
+from pathlib import Path
+
+# podesavanja.py je u istom folderu kao ovaj program. qgis konzola taj folder
+# ne dodaje uvek sama u putanju za import, pa se ovde dodaje rucno.
+if "__file__" in globals():
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+from podesavanja import DATA   # putanje su u podesavanja.py
 
 # ---- ove dve putanje treba podesiti ---------------------------------------
-SRC_10CM = r"C:\thesis\data\Campus Novi Sad.ecw"     # originalna datoteka od 10 cm
-DST_30CM = r"C:\thesis\data\campus_30cm.tif"
+SRC_10CM = str(DATA / "Campus Novi Sad.ecw")        # originalna datoteka od 10 cm
+DST_30CM = str(DATA / "campus_30cm.tif")
 N = 300                                              # velicina bloka u pikselima od 30 cm
 PLACES = [(0.20, 0.20), (0.20, 0.75), (0.80, 0.60)]  # centar grada, liman, petrovaradin
 METHODS = ["near", "bilinear", "cubic", "cubicspline", "lanczos", "average", "mode"]

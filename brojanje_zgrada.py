@@ -13,7 +13,9 @@ pokretanje (u conda okruzenju "thesis", iz foldera c:\\thesis):
 """
 import geopandas as gpd
 
-GPKG = r"C:\thesis\data\kampus_oznake.gpkg"
+from podesavanja import DATA   # putanje su u podesavanja.py
+
+GPKG = DATA / "kampus_oznake.gpkg"
 # vrednosti polja "skup" -> imena podrucja u radu
 NAMES = {"trening": "Petrovaradin", "validacija": "kampus", "test": "centar"}
 

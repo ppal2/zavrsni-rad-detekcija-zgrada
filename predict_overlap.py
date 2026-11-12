@@ -32,14 +32,16 @@ import torch
 from rasterio.windows import Window
 from tqdm import tqdm
 
+from podesavanja import DATA, THESIS_DIR   # putanje su u podesavanja.py
+
 # ---------------------------------------------------------------------------
 # podesavanja
 # ---------------------------------------------------------------------------
 
-INPUT_RASTER = r"C:\thesis\data\campus_30cm.tif"
-OUTPUT_RASTER = r"C:\thesis\data\campus_buildings_whu_overlap.tif"   # za inria: campus_buildings_inria.tif
+INPUT_RASTER = DATA / "campus_30cm.tif"
+OUTPUT_RASTER = DATA / "campus_buildings_whu_overlap.tif"   # za inria: campus_buildings_inria.tif
 PROB_RASTER = None   # putanja za raster verovatnoca (float32); ovde se ne pravi
-MODEL_PATH = r"C:\thesis\best_model_whu.pth"                         # za inria: best_model_inria.pth
+MODEL_PATH = THESIS_DIR / "best_model_whu.pth"                  # za inria: best_model_inria.pth
 
 ENCODER = "resnet34"
 TILE_SIZE = 512

@@ -1,71 +1,90 @@
-# programi za zavrsni rad: detekcija zgrada na ortofotou novog sada
+# Programi za završni rad: detekcija zgrada na ortofotou Novog Sada
 
-programi napisani za zavrsni (bachelor) rad na fakultetu tehnickih nauka u novom sadu
-(autor: pal piri, mentor: prof. miro govedarica).
+Ovde su programi napisani za završni (bachelor) rad na Fakultetu tehničkih nauka u Novom Sadu.
 
-dva modela u-net sa enkoderom resnet34 trenirana su na javnim skupovima podataka
-(whu building dataset i inria aerial image labeling, gradovi bec i zapadni tirol),
-primenjena na ortofoto novog sada rezolucije 30 cm, ocenjena na tri rucno oznacena
-podrucja (petrovaradin, kampus, centar), dotrenirana postupkom "izostavi jedno
-podrucje" i na kraju pokrenuta u qgis-u preko dodatka deepness.
+- Autor: Pal Piri
+- Mentor: prof. dr Miro Govedarica
 
-## redosled pokretanja
+## Šta je urađeno
 
-| korak | program | sta radi | izlaz |
+1. Mreža U-Net sa enkoderom ResNet34 trenirana je dva puta: na skupu WHU i na delu skupa Inria (Beč i Zapadni Tirol).
+2. Oba modela su primenjena na ortofoto Novog Sada, rezolucije 30 cm.
+3. Na ortofotou su ručno nacrtane zgrade na tri područja: Petrovaradin, kampus i centar. Na tim područjima su modeli ocenjeni.
+4. Modeli su zatim dotrenirani na ručno nacrtanim zgradama. Svaki put je model dotreniran na dva područja, a ocenjen na trećem.
+5. Na kraju je dotrenirani model Inria pokrenut u programu QGIS, pomoću dodatka Deepness.
+
+## Redosled pokretanja
+
+| Korak | Program | Šta radi | Rezultat |
 | --- | --- | --- | --- |
-| 1 | provera_prevzorkovanja.py | (u python konzoli qgis-a) proverava kojim nacinom je ortofoto smanjen sa 10 cm na 30 cm | tabela u konzoli |
-| 2 | tile_inria.py | sece snimke skupa inria (bec, zapadni tirol) na isecke 512 x 512, snimci 1-5 idu u validaciju, oznake 0/1, izbacuje 80 % praznih isecaka | isecci za treniranje i validaciju |
-| 3 | train.py | trenira u-net/resnet34 (dice + bce, adam 1e-4, 20 epoha) i cuva model sa najvecim validacionim iou; pokrece se dva puta, za whu i za inria (promeni se data_root i ime izlazne datoteke) | best_model_whu.pth, best_model_inria.pth |
-| 4 | podaci_treniranja.py | broji isecke, ponovo racuna validacioni iou sacuvanih modela i meri brzinu treniranja | brojevi za rad |
-| 5 | broj_parametara.py | broji parametre mreze (enkoder, dekoder, izlazni sloj) | brojevi za rad |
-| 6 | predict.py | prva verzija predvidjanja: prozori bez preklapanja (vide se savovi) | karta zgrada |
-| 7 | predict_overlap.py | predvidjanje na celom ortofotou sa preklapanjem 50 % i hann tezinama; pokrece se za oba modela | campus_buildings_whu_overlap.tif, campus_buildings_inria.tif |
-| 8 | pravi_isecke.py | rasterizuje rucno nacrtane zgrade i podrucja na mrezu ortofotoa od 30 cm | maska_30cm.tif, oblasti_30cm.tif |
-| 9 | za_proveru.py | pravi spisak mesta gde su rucne oznake mozda pogresne (oba modela se ne slazu sa oznakom) | za_proveru.gpkg |
-| 10 | brojanje_zgrada.py | broji zgrade po podrucjima (po centroidu) i racuna udeo zgrada | brojevi za tabelu 4.2 |
-| 11 | ocena.py | mere po pikselima (iou, preciznost, odziv, f1) i po objektima, po podrucjima; karte gresaka | rezultati_ocena.csv, greske_whu.tif, greske_inria.tif |
-| 12 | slika_savovi.py | poredi predvidjanje bez preklapanja i sa preklapanjem i crta sliku 4.4 | slika_savovi_whu.png, slika_savovi_inria.png |
-| 13 | dotreniravanje.py | sest dotreniravanja (2 modela x 3 podrucja) po postupku "izostavi jedno podrucje", ocena pre i posle | rezultati_dotreniravanje.csv, dotreniran_*.tif, dotreniran_*_bez_*.pth |
-| 14 | izvoz_onnx.py | cuva dotrenirani model inria (bez kampusa) u formatu onnx sa podesavanjima za deepness i proverava ga | deepness_zgrade_inria.onnx |
-| 15 | ocena_deepness.py | poredi rezultat iz deepness-a sa rucnim oznakama i sa predvidjanjem iz pythona | tabela u konzoli |
+| 1 | provera_prevzorkovanja.py | Proverava kojom metodom je ortofoto smanjen sa 10 cm na 30 cm. Pokreće se u Python konzoli QGIS-a. | Tabela u konzoli |
+| 2 | tile_inria.py | Seče snimke skupa Inria (Beč, Zapadni Tirol) na isečke 512 × 512 piksela. Snimci 1–5 idu u validaciju. Oznake pretvara u 0 i 1. Izbacuje 80 % isečaka bez zgrada. | Isečci za treniranje i validaciju |
+| 3 | train.py | Trenira U-Net sa enkoderom ResNet34 (Dice + BCE, Adam 1e-4, 20 epoha). Čuva model sa najvećim validacionim IoU. Pokreće se dva puta, za WHU i za Inria. Pre drugog pokretanja promene se `DATA_ROOT` i `MODEL_OUT`. | best_model_whu.pth, best_model_inria.pth |
+| 4 | podaci_treniranja.py | Broji isečke, ponovo računa validacioni IoU sačuvanih modela i meri brzinu treniranja. | Brojevi za rad |
+| 5 | broj_parametara.py | Broji parametre mreže: u enkoderu, u dekoderu i u poslednjem sloju. | Brojevi za rad |
+| 6 | predict.py | Prva verzija predviđanja. Prozori se ne preklapaju, pa se na rezultatu vide šavovi. | Karta zgrada |
+| 7 | predict_overlap.py | Predviđanje na celom ortofotou. Prozori se preklapaju 50 % i spajaju se sa Hann težinama. Pokreće se za oba modela. | campus_buildings_whu_overlap.tif, campus_buildings_inria.tif |
+| 8 | pravi_isecke.py | Pretvara ručno nacrtane zgrade i područja u raster na mreži ortofotoa od 30 cm. Seče isečke 512 × 512 piksela. | maska_30cm.tif, oblasti_30cm.tif, isečci |
+| 9 | za_proveru.py | Pravi spisak mesta gde su ručne oznake možda pogrešne, tj. gde se oba modela ne slažu sa oznakom. | za_proveru.gpkg |
+| 10 | brojanje_zgrada.py | Broji zgrade po područjima (po centroidu). Računa koliki deo područja zauzimaju zgrade. | Brojevi za tabelu 4.2 |
+| 11 | ocena.py | Računa mere po pikselima (IoU, preciznost, odziv, F1) i po objektima, za svako područje. Pravi karte grešaka. | rezultati_ocena.csv, greske_whu.tif, greske_inria.tif |
+| 12 | slika_savovi.py | Poredi predviđanje bez preklapanja i sa preklapanjem. Crta sliku 4.4. | slika_savovi_whu.png, slika_savovi_inria.png |
+| 13 | dotreniravanje.py | Šest dotreniravanja (2 modela × 3 područja). Svaki put se jedno područje izostavi i na njemu se model oceni. Ocenjuje modele pre i posle dotreniravanja. | rezultati_dotreniravanje.csv, dotreniran_*.tif, dotreniran_*_bez_*.pth |
+| 14 | izvoz_onnx.py | Čuva dotrenirani model Inria (dotreniran bez kampusa) u formatu ONNX, sa podešavanjima za Deepness. Zatim ga proverava. | deepness_zgrade_inria.onnx |
+| 15 | ocena_deepness.py | Poredi rezultat iz Deepness-a sa ručnim oznakama i sa predviđanjem iz Python-a. | Tabela u konzoli |
+| 16 | napravi_average_30cm.py | Dodatna provera: smanjuje ortofoto sa 10 cm na 30 cm metodom average, iz punog snimka od 10 cm. Poredi ga sa campus_30cm.tif. Pokreće se u Python konzoli QGIS-a. Posle njega se predict_overlap.py i ocena.py pokreću na novom snimku. | campus_30cm_average.tif, tabela u konzoli |
 
-posle pregleda oznaka (korak 9) ispravljene oznake se ponovo pretvaraju u masku
-(korak 8), pa se ponovo pokrecu koraci 10 i 11.
+Napomene:
 
-ocena_deepness.py, dotreniravanje.py i slika_savovi.py uvoze funkcije iz ocena.py,
-pa sva cetiri programa moraju biti u istom folderu.
+- Posle pregleda oznaka (korak 9) ispravljene oznake se ponovo pretvaraju u masku (korak 8). Zatim se ponovo pokreću koraci 10 i 11.
+- Svi programi moraju biti u istom folderu kao podesavanja.py.
+- Programi ocena_deepness.py, dotreniravanje.py i slika_savovi.py koriste funkcije iz ocena.py. Zato i ocena.py mora biti u istom folderu.
 
-## podesavanja i putanje
+## Podešavanja i putanje
 
-svaki program na pocetku ima deo "podesavanja" sa putanjama i parametrima. putanje
-su apsolutne i odgovaraju racunaru na kome je rad uradjen (folder c:\thesis, podaci u
-c:\thesis\data); na drugom racunaru treba ih promeniti. ispisi programa su na engleskom.
+Sve putanje su u jednoj datoteci, podesavanja.py. Tu su dve vrednosti:
 
-ocekivani raspored podataka:
+- `THESIS_DIR` – folder sa modelima (u radu C:\thesis),
+- `DATA` – folder sa podacima (u radu C:\thesis\data).
 
-```
-c:\thesis\data\whu\{train,val,test}\{image,label}\*.tif      skup whu (vec isecen na 512 x 512)
-c:\thesis\data\inria\train\{images,gt}\*.tif                 skup inria (original)
-c:\thesis\data\inria_tiles\...                               pravi tile_inria.py
-c:\thesis\data\campus_30cm.tif                               ortofoto novog sada, 30 cm
-c:\thesis\data\kampus_oznake.gpkg                            rucne oznake (slojevi zgrade i oblasti)
-c:\thesis\data\isecci_kampus\...                             pravi pravi_isecke.py
-```
+Na drugom računaru promeni se samo `THESIS_DIR`, a ako su podaci na drugom mestu, i `DATA`. Ostala podešavanja (parametri) su na početku svakog programa. Programi ispisuju poruke na engleskom.
 
-## sta nije u repozitorijumu
-
-- skupovi whu i inria (preuzimaju se sa sajtova autora);
-- ortofoto novog sada i rucne oznake;
-- sacuvani modeli (.pth i .onnx, oko 98 mb svaki) i rasteri sa rezultatima.
-
-## instalacija
+Raspored podataka:
 
 ```
-conda create -n thesis python
+C:\thesis\data\whu\{train,val,test}\{image,label}\*.tif    skup WHU (već isečen na 512 x 512)
+C:\thesis\data\inria\train\{images,gt}\*.tif               skup Inria (originalni snimci)
+C:\thesis\data\inria_tiles\...                             pravi ga tile_inria.py
+C:\thesis\data\campus_30cm.tif                             ortofoto Novog Sada, 30 cm
+C:\thesis\data\kampus_oznake.gpkg                          ručne oznake (slojevi zgrade i oblasti)
+C:\thesis\data\isecci_kampus\...                           pravi ga pravi_isecke.py
+C:\thesis\data\deepness_zgrada.shp                         rezultat dodatka Deepness (za ocena_deepness.py)
+```
+
+## Ponovljivost
+
+- Programi train.py i dotreniravanje.py koriste seed 42, pa novo pokretanje pravi iste nasumične izbore.
+- Seed je u train.py dodat posle izrade rada. Polazni modeli iz rada trenirani su bez seed-a, pa novo treniranje ne daje potpuno iste modele.
+- Na grafičkoj kartici neki proračuni nisu potpuno isti pri svakom pokretanju, pa rezultat i sa seed-om može malo da se razlikuje.
+
+## Šta nije u repozitorijumu
+
+- Skupovi WHU i Inria. Preuzimaju se sa sajtova autora.
+- Ortofoto Novog Sada i ručne oznake.
+- Sačuvani modeli (.pth i .onnx, oko 98 MB svaki) i rasteri sa rezultatima. Preveliki su za GitHub.
+
+## Instalacija
+
+```
+conda create -n thesis python=3.11
 conda activate thesis
 pip install -r requirements.txt
 ```
 
-pytorch sa podrskom za graficku karticu (cuda) instalira se prema uputstvu sa pytorch.org.
-treniranje je radjeno na grafickoj kartici nvidia gtx 1050 ti (4 gb).
-provera_prevzorkovanja.py se pokrece u qgis-u, jer treba gdal koji cita ecw datoteke.
+- Verzije biblioteka u requirements.txt su iste kao u radu (tabela 4.1). PyTorch sa podrškom za grafičku karticu (CUDA 12.6) preuzima se sa sajta pytorch.org.
+- Treniranje je rađeno na grafičkoj kartici NVIDIA GTX 1050 Ti (4 GB).
+- Programi provera_prevzorkovanja.py i napravi_average_30cm.py se pokreću u QGIS-u (3.34.2), jer koriste GDAL iz QGIS-a, koji čita ECW datoteke.
+
+## Licenca
+
+MIT. Vidi datoteku LICENSE.
